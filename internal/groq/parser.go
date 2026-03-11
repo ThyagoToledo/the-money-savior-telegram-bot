@@ -61,3 +61,66 @@ resposta: {"intent":"income","amount":1500.00,"category":"freela","method":"pix"
 
 mensagem: "almocei por 32 reais no credito"
 resposta: {"intent":"expense","amount":32.00,"category":"restaurante","method":"credito"}`
+
+func ParseMessage(userMessage string) (*ParsedExpense, error) {
+	apiKey := os.Getenv("GROQ_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("GROQ_API_KEY não configurada")
+	}
+
+	reqBody := groqRequest{
+		Model:       "llama3-8b-8192",
+		Temperature: 0.1, // baixo para respostas mais consistentes
+		Messages: []groqMessage{
+			{Role: "system", Content: systemPrompt},
+			{Role: "user", Content: userMessage},
+		},
+	}
+
+	bodyBytes, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao serializar requisição: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", "https://api.groq.com/openai/v1/chat/completions", bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		return nil, fmt.Errorf("erro ao criar requisição: %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao chamar Groq API: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("Groq API retornou status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var groqResp groqResponse
+	if err := json.NewDecoder(resp.Body).Decode(&groqResp); err != nil {
+		return nil, fmt.Errorf("erro ao decodificar resposta do Groq: %w", err)
+	}
+
+	if len(groqResp.Choices) == 0 {
+		return nil, fmt.Errorf("Groq não retornou nenhuma resposta")
+	}
+
+	rawJSON := strings.TrimSpace(groqResp.Choices[0].Message.Content)
+
+	var parsed ParsedExpense
+	if err := json.Unmarshal([]byte(rawJSON), &parsed); err != nil {
+		return nil, fmt.Errorf("erro ao fazer parse do JSON retornado pelo Groq (%q): %w", rawJSON, err)
+	}
+
+	if parsed.Amount <= 0 {
+		return nil, fmt.Errorf("não consegui identificar um valor na mensagem")
+	}
+
+	return &parsed, nil
+}
