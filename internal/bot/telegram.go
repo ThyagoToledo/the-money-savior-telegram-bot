@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"log"
+	"money-telegram-bot/internal/groq"
 
 	"money-telegram-bot/internal/handlers"
 	"money-telegram-bot/internal/repository"
@@ -64,6 +65,26 @@ func RouteUpdate(
 		default:
 			log.Printf(utils.WarnUnknownCommand, command)
 			handlers.HandleInvalidCommand(bot, msg)
+		}
+	} else if msg.Text != "" {
+		parsed, err := groq.ParseMessage(msg.Text)
+		if err != nil {
+			log.Printf("[ERROR] Groq falhou: %v", err)
+			reply := tgbotapi.NewMessage(msg.Chat.ID, "❌ Não consegui entender. Tenta de novo.")
+			bot.Send(reply)
+			return
+		}
+
+		switch parsed.Intent {
+		case "expense":
+			h.Expense.HandleParsed(bot, msg, parsed)
+		case "query":
+			h.Query.HandleParsed(bot, msg, parsed)
+		case "delete":
+			h.Delete.HandleParsed(bot, msg, parsed)
+		default:
+			reply := tgbotapi.NewMessage(msg.Chat.ID, "🤔 Não entendi o que você quis dizer. Consegue mandar denovo?")
+			bot.Send(reply)
 		}
 	}
 }

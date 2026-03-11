@@ -70,7 +70,7 @@ func ParseMessage(userMessage string) (*ParsedExpense, error) {
 
 	reqBody := groqRequest{
 		Model:       "llama3-8b-8192",
-		Temperature: 0.1, // baixo para respostas mais consistentes
+		Temperature: 0.1,
 		Messages: []groqMessage{
 			{Role: "system", Content: systemPrompt},
 			{Role: "user", Content: userMessage},
