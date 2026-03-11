@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"log"
+	"money-telegram-bot/internal/groq"
 	"strconv"
 	"strings"
 	"time"
@@ -19,6 +20,33 @@ type ExpenseHandler struct {
 
 func NewExpenseHandler(expenseService *service.ExpenseService) *ExpenseHandler {
 	return &ExpenseHandler{expenseService: expenseService}
+}
+
+func (h *ExpenseHandler) HandleParsed(bot *tgbotapi.BotAPI, message *tgbotapi.Message, parsed *groq.ParsedExpense) {
+	log.Printf(utils.InfoProcessingExpense, message.From.ID)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	expense, err := h.expenseService.CreateExpense(
+		ctx,
+		message.From.ID,
+		message.Chat.ID,
+		message.From.UserName,
+		parsed.Amount,
+		parsed.Category,
+		parsed.Method,
+	)
+
+	if err != nil {
+		log.Printf(utils.ErrorSavingExpense, message.From.ID, err)
+		utils.Reply(bot, message.Chat.ID, utils.ErrSaveExpense)
+		return
+	}
+
+	utils.Reply(bot, message.Chat.ID,
+		utils.SuccessExpenseMessage(expense.ExpenseID, expense.Amount, expense.Category, expense.Method),
+	)
 }
 
 func (h *ExpenseHandler) Handle(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
