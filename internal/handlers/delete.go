@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"log"
-	"money-telegram-bot/internal/service"
 	"strings"
 
+	"money-telegram-bot/internal/groq"
+	"money-telegram-bot/internal/service"
 	"money-telegram-bot/internal/utils"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -58,4 +59,8 @@ func (h *DeleteHandler) HandleDelete(bot *tgbotapi.BotAPI, message *tgbotapi.Mes
 
 	log.Printf(utils.InfoExpenseDeleted, message.From.ID, expenseID)
 	utils.Reply(bot, message.Chat.ID, utils.SuccessDeleteExpense)
+}
+
+func (h *DeleteHandler) HandleParsed(bot *tgbotapi.BotAPI, message *tgbotapi.Message, _ *groq.ParsedExpense) {
+	utils.Reply(bot, message.Chat.ID, utils.ErrShouldUseFormatToDelete)
 }

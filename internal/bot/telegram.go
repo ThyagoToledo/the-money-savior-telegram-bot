@@ -111,6 +111,7 @@ func Start(token string) error {
 	botHandlers := &BotHandlers{
 		Expense: handlers.NewExpenseHandler(expenseService),
 		Query:   handlers.NewQueryHandler(expenseService),
+		Delete:  handlers.NewDeleteHandler(expenseService),
 	}
 
 	u := tgbotapi.NewUpdate(0)

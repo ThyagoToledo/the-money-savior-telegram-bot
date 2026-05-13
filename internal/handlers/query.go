@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"money-telegram-bot/internal/groq"
 	"strings"
 	"time"
 
@@ -65,4 +66,8 @@ func (h *QueryHandler) Handle(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 		message.Chat.ID,
 		utils.ExpenseListMessage(expenses),
 	)
+}
+
+func (h *QueryHandler) HandleParsed(bot *tgbotapi.BotAPI, message *tgbotapi.Message, _ *groq.ParsedExpense) {
+	h.Handle(bot, message)
 }

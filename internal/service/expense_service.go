@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -43,6 +44,15 @@ func (s *ExpenseService) CreateExpense(
 	methodInput string,
 ) (*models.Expense, error) {
 
+	nowUtc := time.Now().UTC()
+	loc, err := time.LoadLocation("America/Sao_Paulo")
+	if err != nil {
+		fmt.Println("Error loading location:", err)
+		return nil, err
+	}
+
+	brazilCreationTime := nowUtc.In(loc)
+
 	expense := &models.Expense{
 		UserID:    userID,
 		ChatID:    chatID,
@@ -50,7 +60,7 @@ func (s *ExpenseService) CreateExpense(
 		Amount:    amount,
 		Category:  utils.FormatTitle(categoryInput),
 		Method:    utils.NormalizeMethod(methodInput),
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: brazilCreationTime,
 	}
 
 	if err := s.repo.Save(ctx, expense); err != nil {

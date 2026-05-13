@@ -17,7 +17,9 @@ const (
 	InfoProcessingHelp    = "[INFO] Processing /help command"
 	InfoProcessingExpense = "[INFO] Processing /gastei | userID=%d"
 	InfoProcessingQuery   = "[INFO] Processing /consulta | userID=%d"
-	InfoProcessingDelete  = "[INFO] Processing /deletar | userID=%d"
+	InfoProcessingDelete        = "[INFO] Processing /deletar | userID=%d"
+	InfoProcessingEduardaQuery = "[INFO] Processing /eduarda | userID=%d"
+	InfoEduardaMessageSent     = "[INFO] Eduarda message sent | userID=%d"
 
 	InfoPersistingDataIntoDynamodb = "[INFO] Persisting data into DynamoDB | userID=%d"
 	InfoExpenseCreated             = "[INFO] Expense created | userID=%d | expenseID=%s | amount=%.2f"
