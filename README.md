@@ -321,7 +321,6 @@ Distribuído sob a licença MIT. Veja `LICENSE` para mais detalhes.
 ## Autores
 
 **Thyago Toledo**
-- Email: thyago10a2007@gmail.com
 - GitHub: [@ThyagoToledo](https://github.com/ThyagoToledo)
 
 **Amorim**
