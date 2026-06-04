@@ -10,7 +10,7 @@
 
 Um **assistente pessoal de controle de gastos** integrado ao Telegram com suporte a IDs sequenciais, navegação inteligente e gerenciamento completo de despesas.
 
-[Repositório](#) • [Documentação](#documentação) • [Quick Start](#-quick-start) • [Comandos](#-comandos-disponíveis)
+[Repositório](https://github.com/ThyagoToledo/the-money-savior-telegram-bot) • [Documentação](#documentação) • [Quick Start](#-quick-start) • [Comandos](#-comandos-disponíveis)
 
 </div>
 
@@ -320,12 +320,8 @@ Distribuído sob a licença MIT. Veja `LICENSE` para mais detalhes.
 
 ## Autores
 
-**Thyago Toledo**
-- Email: thyago10a2007@gmail.com
-- GitHub: [@ThyagoToledo](https://github.com/ThyagoToledo)
-
-**Amorim**
-- GitHub: [@AmrmDev](https://github.com/AmrmDev)
+* **AmrmDev** - https://github.com/AmrmDev
+* **ThyagoToledo** - https://github.com/ThyagoToledo
 
 ---
 
